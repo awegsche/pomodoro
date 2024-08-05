@@ -63,12 +63,10 @@ def print_watches(_: list[str], manager: Manager):
     """
 
     print(f"{len(manager.watches)} watches")
-    i = 0
-    for w in manager.watches.values():
+    for i,w in enumerate(manager.watches.values()):
         if w.archived:
             continue
         print(f"[{i:3}] {w}")
-        i += 1
     print(f"last active: '{manager.last_active}'")
 
 def start_watch(words: list[str], manager: Manager):
