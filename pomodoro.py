@@ -1,7 +1,10 @@
 from collections.abc import Callable
 import pathlib
+import datetime
 
 from stopwatch import Stopwatch
+
+# ---- Manager -------------------------------------------------------------------------------------
 
 class Manager():
     def __init__(self) -> None:
@@ -9,6 +12,8 @@ class Manager():
         self.last_active: str = ""
         self.running = True
         self.savepath = pathlib.Path("~/Documents/pomodoro.txt").expanduser()
+        now = datetime.datetime.now()
+        self.weekly = pathlib.Path(f"~/Documents/pomodoro_weekly_{now.year}{now.month}{now.day}.txt").expanduser()
         self.commands: dict[str, Callable[[list[str], Manager], None]] = {}
         self.shorts: dict[str, str] = {}
 
@@ -39,6 +44,7 @@ class Manager():
         else:
             print(f"Unknown command '{cmd_input}'")
 
+# ---- CLI commands --------------------------------------------------------------------------------
 
 def get_watch(key: str, manager: Manager) -> Stopwatch | None:
     """Returns a watch by name or index"""
@@ -57,8 +63,12 @@ def print_watches(_: list[str], manager: Manager):
     """
 
     print(f"{len(manager.watches)} watches")
-    for (i,w) in enumerate(manager.watches.values()):
+    i = 0
+    for w in manager.watches.values():
+        if w.archived:
+            continue
         print(f"[{i:3}] {w}")
+        i += 1
     print(f"last active: '{manager.last_active}'")
 
 def start_watch(words: list[str], manager: Manager):
@@ -131,6 +141,19 @@ def print_help(_: list[str], manager: Manager):
         else:
             print("    no documentation")
 
+def archive_watch(words: list[str], manager: Manager):
+    w = get_watch(words[1], manager)
+    w.archived = True
+
+def weekly_archive(words: list[str], manager: Manager):
+    print_watches(words, manager)
+    with open(manager.weekly, 'w') as savefile:
+        savefile.writelines([w.serialise() + "\n" for w in manager.watches.values()])
+    manager.watches.clear()
+    
+
+# ---- main ----------------------------------------------------------------------------------------
+
 def main():
     manager = Manager()
 
@@ -140,11 +163,16 @@ def main():
     manager.add_command("cont", cont_watch)
     manager.add_command("quit", quit_program)
     manager.add_command("help", print_help)
+    manager.add_command("archive", archive_watch)
+    manager.add_command("weekly", weekly_archive)
 
     manager.add_shortcut("q", "quit")
     manager.add_shortcut("p", "print")
     manager.add_shortcut("c", "cont")
     manager.add_shortcut("h", "help")
+    manager.add_shortcut("a", "archive")
+    manager.add_shortcut("w", "weekly")
+    manager.add_shortcut("wa", "weekly")
 
     while(manager.running):
         cmd = input("> ")
