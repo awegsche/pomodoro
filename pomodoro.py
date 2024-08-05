@@ -47,7 +47,7 @@ class Manager():
 # ---- CLI commands --------------------------------------------------------------------------------
 
 def get_watch(key: str, manager: Manager) -> Stopwatch | None:
-    """Returns a watch by name or index"""
+    """Returns a watch by name or index."""
     try:
         idx = int(key)
         keys = list(manager.watches.keys())
@@ -59,7 +59,7 @@ def get_watch(key: str, manager: Manager) -> Stopwatch | None:
 
 def print_watches(_: list[str], manager: Manager):
     """Prints all available watches (active and inactive).
-    Including status and already elapsed time
+    Including status and already elapsed time.
     """
 
     print(f"{len(manager.watches)} watches")
@@ -88,7 +88,7 @@ def start_watch(words: list[str], manager: Manager):
     manager.last_active = words[1]
 
 def cont_watch(words: list[str], manager: Manager):
-    """Resumes a taking time by the given watch"""
+    """Resumes a taking time by the given watch."""
 
     if len(words) < 2:
         print("no watch name or index given")
@@ -103,7 +103,7 @@ def cont_watch(words: list[str], manager: Manager):
         print("error, can't find watch with that name")
 
 def pause_watch(words: list[str], manager: Manager):
-    """Pauses the given watch"""
+    """Pauses the given watch."""
 
     if len(words) < 2:
         print("no watch name or index given")
@@ -117,13 +117,13 @@ def pause_watch(words: list[str], manager: Manager):
         print("error, can't find watch with that name")
 
 def quit_program(_: list[str], manager: Manager):
-    """Saves the status and taken time of all watches and quits the program"""
+    """Saves the status and taken time of all watches and quits the program."""
     manager.running = False
     with open(manager.savepath, 'w') as savefile:
         savefile.writelines([w.serialise() + "\n" for w in manager.watches.values()])
 
 def print_help(_: list[str], manager: Manager):
-    """Prints this help message"""
+    """Prints this help message."""
     print("")
     for c in manager.commands:
         cmd = manager.commands[c]
@@ -138,14 +138,19 @@ def print_help(_: list[str], manager: Manager):
             lines = cmd.__doc__.split('\n')
             for line in lines:
                 print(f"    {line.strip()}")
+            print("")
         else:
-            print("    no documentation")
+            print("    <no documentation>\n")
 
 def archive_watch(words: list[str], manager: Manager):
+    """Archiving (hiding) a watch."""
     w = get_watch(words[1], manager)
     w.archived = True
 
 def weekly_archive(words: list[str], manager: Manager):
+    """Printing all watches and moving them to a backup file.
+    This function is meant to be used to compile weekly / monthly / etc. progress.
+    """
     print_watches(words, manager)
     with open(manager.weekly, 'w') as savefile:
         savefile.writelines([w.serialise() + "\n" for w in manager.watches.values()])

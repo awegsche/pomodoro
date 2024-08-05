@@ -5,18 +5,30 @@
 ```
  print, p:
     Prints all available watches (active and inactive).
-    Including status and already elapsed time
+    Including status and already elapsed time.
+
 
  start:
     Starts a new watch with the given name.
     If a watch with that name already exists, prints a warning and does nothing.
 
+
  pause:
-    Pauses the given watch
+    Pauses the given watch.
+
  cont, c:
-    Resumes a taking time by the given watch
+    Resumes a taking time by the given watch.
+
  quit, q:
-    Saves the status and taken time of all watches and quits the program
+    Saves the status and taken time of all watches and quits the program.
+
  help, h:
-    Prints this help message
+    Prints this help message.
+
+ archive, a:
+    Archiving (hiding) a watch.
+
+ weekly, w, wa:
+    Printing all watches and moving them to a backup file.
+    This function is meant to be used to compile weekly / monthly / etc. progress.
 ```
