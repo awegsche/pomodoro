@@ -2,7 +2,7 @@ from collections.abc import Callable
 import pathlib
 import datetime
 
-from stopwatch import Stopwatch
+from stopwatch import Stopwatch, format_timedelta
 
 # ---- Manager -------------------------------------------------------------------------------------
 
@@ -13,7 +13,7 @@ class Manager():
         self.running = True
         self.savepath = pathlib.Path("~/Documents/pomodoro.txt").expanduser()
         now = datetime.datetime.now()
-        self.weekly = pathlib.Path(f"~/Documents/pomodoro_weekly_{now.year}{now.month}{now.day}.txt").expanduser()
+        self.daily = pathlib.Path(f"~/Documents/pomodoro_daily_{now.year}{now.month}{now.day}.txt").expanduser()
         self.commands: dict[str, Callable[[list[str], Manager], None]] = {}
         self.shorts: dict[str, str] = {}
 
@@ -25,6 +25,25 @@ class Manager():
 
     def add_command(self, keyword: str, command: Callable[[list[str], "Manager"], None]):
         self.commands[keyword] = command
+
+    def get_categories(self) -> list[str]:
+        cats = []
+        for w in self.watches.values():
+            if w.category not in cats:
+                cats.append(w.category)
+
+        return cats
+
+    def sum_by_categories(self) -> dict[str, datetime.timedelta]:
+        cats:dict[str, datetime.timedelta] = {}
+
+        for w in self.watches.values():
+            if w.category not in cats:
+                cats[w.category] = w.get_elapsed()
+            else:
+                cats[w.category] = cats[w.category] + w.get_elapsed()
+
+        return cats
 
     def add_shortcut(self, shortcut: str, keyword: str):
         self.shorts[shortcut] = keyword
@@ -136,7 +155,7 @@ def pause_watch(words: list[str], manager: Manager):
     w = get_watch(words[1], manager)
     if w is not None:
         w.pause()
-        print(f"pausing '{w.name}', elapsed: {w.get_elapsed()}")
+        print(f"pausing '{w.name}', elapsed: {format_timedelta(w.get_elapsed())}")
     else:
         print("error, can't find watch with that name")
     save(words, manager)
@@ -183,12 +202,21 @@ def archive_watch(words: list[str], manager: Manager):
         print("ERROR: couldn't find watch to archive")
     save(words, manager)
 
-def weekly_archive(words: list[str], manager: Manager):
+def print_categories(_: list[str], manager: Manager):
+    """Printing total times for all categories"""
+
+    cats = manager.sum_by_categories()
+
+    for c in cats:
+        print(f"{c:24} {format_timedelta(cats[c])}")
+
+def daily_archive(words: list[str], manager: Manager):
     """Printing all watches and moving them to a backup file.
-    This function is meant to be used to compile weekly / monthly / etc. progress.
+    This function is meant to be used to compile daily / monthly / etc. progress.
     """
     print_watches(words, manager)
-    with open(manager.weekly, 'w') as savefile:
+    print_categories(words, manager)
+    with open(manager.daily, 'w') as savefile:
         savefile.writelines([w.serialise() + "\n" for w in manager.watches.values()])
     manager.watches.clear()
     
@@ -206,7 +234,8 @@ def main():
     manager.add_command("quit", quit_program)
     manager.add_command("help", print_help)
     manager.add_command("archive", archive_watch)
-    manager.add_command("weekly", weekly_archive)
+    manager.add_command("daily", daily_archive)
+    manager.add_command("pcats", print_categories)
 
     manager.add_shortcut("q", "quit")
     manager.add_shortcut("p", "print")
@@ -214,8 +243,6 @@ def main():
     manager.add_shortcut("s", "start")
     manager.add_shortcut("h", "help")
     manager.add_shortcut("a", "archive")
-    manager.add_shortcut("w", "weekly")
-    manager.add_shortcut("wa", "weekly")
 
     while(manager.running):
         cmd = input("> ")

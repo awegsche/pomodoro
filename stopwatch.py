@@ -6,6 +6,12 @@ def decode_note(note: str) -> str:
 def sanitise_note(note: str) -> str:
     return note.replace(',', '%komma%')
 
+def format_timedelta(td: datetime.timedelta) -> str:
+    hours, remainder = divmod(int(td.total_seconds()), 3600)
+    minutes, secs = divmod(remainder, 60)
+
+    return f"{hours:02}:{minutes:02}:{secs:02}"
+
 class Stopwatch():
     def __init__(self, name: str) -> None:
         self.name = name
@@ -14,7 +20,7 @@ class Stopwatch():
         self.elapsed: datetime.timedelta = datetime.timedelta(0)
         self.note: str = ""
         self.archived: bool = False
-        self.category: str = ""
+        self.category: str = "None"
 
     def __eq__(self, value: object) -> bool:
         return (self.name == value.name and
@@ -37,11 +43,8 @@ class Stopwatch():
         self.starttime = datetime.datetime.now()
 
     def __repr__(self) -> str:
-        hours, remainder = divmod(int(self.get_elapsed().total_seconds()), 3600)
-        minutes, secs = divmod(remainder, 60)
-
         running = "RUN  " if self.running else "PAUSE"
-        return f"{self.name:16} | {hours:02}:{minutes:02}:{secs:02} | {running} | {self.category}"
+        return f"{self.name:16} | {format_timedelta(self.get_elapsed())} | {running} | {self.category}"
 
     def serialise(self) -> str:
         return f"{self.name}, {self.starttime.isoformat()}, {self.elapsed}, {self.running}, {sanitise_note(self.note)}, {self.archived}"
