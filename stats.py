@@ -13,9 +13,8 @@ def get_weekly_cats(_: list[str], _manager: Manager):
     # count back to monday
     day = now - timedelta(days = now.weekday())
     week_cats: dict[str, timedelta] = {}
-    
-    for i in range(now.weekday()+1):
-        manager = Manager(filename=create_pomodoro_archive_filename(day))
+
+    def do_for_manager(day: datetime, manager: Manager):
         cats = manager.sum_by_categories()
 
         print(day.strftime("%a"))
@@ -27,10 +26,18 @@ def get_weekly_cats(_: list[str], _manager: Manager):
                 week_cats[c] = cats[c]
             else:
                 week_cats[c] = week_cats[c] + cats[c]
-        day = day + timedelta(days=1)
         print(" ".join("_" * 20))
         print("")
 
+    
+    for i in range(now.weekday()+1):
+        manager = Manager(filename=create_pomodoro_archive_filename(day))
+        do_for_manager(day, manager)
+        day = day + timedelta(days=1)
+
+    if len(_manager.watches) > 0:
+        print("Unsaved:")
+        do_for_manager(now, _manager)
 
     print("weekly stats:")
     print(f"{len(week_cats)} categories")
@@ -47,10 +54,8 @@ def get_weekly_stats(_: list[str], _manager: Manager):
     # count back to monday
     day = now - timedelta(days = now.weekday())
     week_cats: dict[str, timedelta] = {}
-    
-    for i in range(now.weekday()+1):
-        manager = Manager(filename=create_pomodoro_archive_filename(day))
 
+    def do_for_manager(day: datetime, manager: Manager):
         print(day.strftime("%a"))
         print("===")
         print(f"{len(manager.watches)} watches")
@@ -60,10 +65,18 @@ def get_weekly_stats(_: list[str], _manager: Manager):
                 week_cats[w.name] = w.get_elapsed()
             else:
                 week_cats[w.name] = week_cats[w.name] + w.get_elapsed()
-        day = day + timedelta(days=1)
         print(" ".join("_" * 20))
         print("")
+    
+    for i in range(now.weekday()+1):
+        manager = Manager(filename=create_pomodoro_archive_filename(day))
+        do_for_manager(day, manager)
 
+        day = day + timedelta(days=1)
+
+    if len(_manager.watches) > 0:
+        print("Unsaved:")
+        do_for_manager(now, _manager)
 
     print("weekly stats:")
     print(f"{len(week_cats)} watches")
