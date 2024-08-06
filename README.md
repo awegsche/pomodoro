@@ -1,7 +1,19 @@
 # pomodoro
 
+## Introduction
+
+Keeps track of your activities using different stopwatches.
+Saves start times and total elapsed times in `~/Documents/pomodoro.txt`
+and doesn't need to permanently run to record times.
+
 ## Usage
 
+Start the program with
+```shell
+python pomodoro.py
+```
+
+Then, you can use the following commands to create, start, stop and resume stopwatches:
 ```
  print, p:
     Prints all available watches (active and inactive).
