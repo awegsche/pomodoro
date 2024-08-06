@@ -39,8 +39,9 @@ class Stopwatch():
             return self.elapsed
 
     def cont(self):
-        self.running = True
-        self.starttime = datetime.datetime.now()
+        if not self.running:
+            self.running = True
+            self.starttime = datetime.datetime.now()
 
     def __repr__(self) -> str:
         running = "RUN  " if self.running else "PAUSE"
