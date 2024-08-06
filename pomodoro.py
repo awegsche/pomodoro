@@ -69,11 +69,11 @@ def print_watches(_: list[str], manager: Manager):
         print(f"[{i:3}] {w}")
     print(f"last active: '{manager.last_active}'")
 
-def start_watch(words: list[str], manager: Manager):
-    """Starts a new watch with the given name.
-    If a watch with that name already exists, prints a warning and does nothing.
-    """
+def new_watch(words: list[str], manager: Manager):
+    """Creates a new watch
 
+    Usage: new <watch_name>
+    """
     if len(words) < 2:
         print("no watch name given")
         return
@@ -81,12 +81,34 @@ def start_watch(words: list[str], manager: Manager):
     if words[1] in manager.watches:
         print("error, watch with that name already exists")
         return
+
     manager.watches[words[1]] = Stopwatch(words[1])
     print(f"creating new watch '{words[1]}'")
     manager.last_active = words[1]
+    save(words, manager)
+
+def start_watch(words: list[str], manager: Manager):
+    """Restarts a watch with the given name.
+    If the watch doesn't exist, a new one is created.
+
+    Usage: start <watch_name>
+    """
+    w = get_watch(words[1], manager)
+
+    if w is None:
+        new_watch(words, manager)
+        w = get_watch(words[1], manager)
+
+    if w is not None:
+        w.cont()
+        return
+    print("FATAL ERROR: something went wrong")
 
 def cont_watch(words: list[str], manager: Manager):
-    """Resumes a taking time by the given watch."""
+    """Restarts a watch with the given name.
+
+    Usage: cont <watch_name/watch_index>
+    """
 
     if len(words) < 2:
         print("no watch name or index given")
@@ -99,9 +121,13 @@ def cont_watch(words: list[str], manager: Manager):
         print(f"continuing '{w.name}'")
     else:
         print("error, can't find watch with that name")
+    save(words, manager)
 
 def pause_watch(words: list[str], manager: Manager):
-    """Pauses the given watch."""
+    """Pauses the given watch.
+
+    Usage: pause <watch_name/watch_index>
+    """
 
     if len(words) < 2:
         print("no watch name or index given")
@@ -113,12 +139,17 @@ def pause_watch(words: list[str], manager: Manager):
         print(f"pausing '{w.name}', elapsed: {w.get_elapsed()}")
     else:
         print("error, can't find watch with that name")
+    save(words, manager)
+
+def save(_: list[str], manager: Manager):
+    """Saves the status"""
+    with open(manager.savepath, 'w') as savefile:
+        savefile.writelines([w.serialise() + "\n" for w in manager.watches.values()])
 
 def quit_program(_: list[str], manager: Manager):
     """Saves the status and taken time of all watches and quits the program."""
     manager.running = False
-    with open(manager.savepath, 'w') as savefile:
-        savefile.writelines([w.serialise() + "\n" for w in manager.watches.values()])
+    save(_, manager)
 
 def print_help(_: list[str], manager: Manager):
     """Prints this help message."""
@@ -131,11 +162,14 @@ def print_help(_: list[str], manager: Manager):
             if manager.shorts[short] == c:
                 alias = alias + ", " + short
 
-        print(f" \33[1m{c}{alias}:\33[0m")
+        print(f" {c}{alias}:")
         if cmd.__doc__ is not None:
-            lines = cmd.__doc__.split('\n')
-            for line in lines:
-                print(f"    {line.strip()}")
+            lines = [l.strip() for l in cmd.__doc__.split('\n')]
+            end = len(lines)-1
+            while(lines[end] == ""):
+                end = end - 1
+            for line in lines[:end+1]:
+                print(f"    {line}")
             print("")
         else:
             print("    <no documentation>\n")
@@ -143,7 +177,11 @@ def print_help(_: list[str], manager: Manager):
 def archive_watch(words: list[str], manager: Manager):
     """Archiving (hiding) a watch."""
     w = get_watch(words[1], manager)
-    w.archived = True
+    if w is not None:
+        w.archived = True
+    else:
+        print("ERROR: couldn't find watch to archive")
+    save(words, manager)
 
 def weekly_archive(words: list[str], manager: Manager):
     """Printing all watches and moving them to a backup file.
@@ -161,8 +199,9 @@ def main():
     manager = Manager()
 
     manager.add_command("print", print_watches)
+    manager.add_command("new", new_watch)
     manager.add_command("start", start_watch)
-    manager.add_command("pause", pause_watch)
+    manager.add_command("stop", pause_watch)
     manager.add_command("cont", cont_watch)
     manager.add_command("quit", quit_program)
     manager.add_command("help", print_help)
@@ -171,7 +210,8 @@ def main():
 
     manager.add_shortcut("q", "quit")
     manager.add_shortcut("p", "print")
-    manager.add_shortcut("c", "cont")
+    manager.add_shortcut("n", "new")
+    manager.add_shortcut("s", "start")
     manager.add_shortcut("h", "help")
     manager.add_shortcut("a", "archive")
     manager.add_shortcut("w", "weekly")
