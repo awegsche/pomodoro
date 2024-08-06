@@ -156,8 +156,14 @@ def daily_archive(words: list[str], manager: Manager):
     """Prints all watches and moves them to a backup file.
     This function is meant to be used to compile daily / monthly / etc. progress.
     """
+    print("archiving watches of the day")
+    print("stopping all watches")
+    for w in manager.watches.values():
+        w.pause()
+
     print_watches(words, manager)
     print_categories(words, manager)
+
     with open(manager.daily, 'w') as savefile:
         savefile.writelines([w.serialise() + "\n" for w in manager.watches.values()])
     manager.watches.clear()
