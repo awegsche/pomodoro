@@ -47,6 +47,22 @@ def new_watch(words: list[str], manager: Manager):
     manager.last_active = words[1]
     save(words, manager)
 
+def define_category_for_watch(words: list[str], manager: Manager):
+    """Defines the category of a watch
+
+    Usage: cat <watch_name> <category_name>
+    """
+    if len(words) < 3:
+        print("not enough parameters for this command")
+        return
+
+    w = get_watch(words[1], manager)
+
+    if w is None:
+        print(f"can't find watch '{words[1]}'")
+    else:
+        w.category = words[2]
+
 def start_watch(words: list[str], manager: Manager):
     """Restarts a watch with the given name.
     If the watch doesn't exist, a new one is created.
@@ -186,6 +202,7 @@ def main():
     manager.add_command("pcats", print_categories)
     manager.add_command("wstats", get_weekly_stats)
     manager.add_command("wcats", get_weekly_cats)
+    manager.add_command("cat", define_category_for_watch)
 
     manager.add_shortcut("q", "quit")
     manager.add_shortcut("p", "print")
@@ -193,11 +210,12 @@ def main():
     manager.add_shortcut("s", "start")
     manager.add_shortcut("h", "help")
     manager.add_shortcut("a", "archive")
+    manager.add_shortcut("define_category", "cat")
+    manager.add_shortcut("def_cat", "cat")
 
     while(manager.running):
         cmd = input("> ")
         manager.exec(cmd)
-
 
 main()
 
