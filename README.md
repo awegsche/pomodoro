@@ -7,17 +7,26 @@
     Prints all available watches (active and inactive).
     Including status and already elapsed time.
 
+ new, n:
+    Creates a new watch
 
- start:
-    Starts a new watch with the given name.
-    If a watch with that name already exists, prints a warning and does nothing.
+    Usage: new <watch_name>
 
+ start, s:
+    Restarts a watch with the given name.
+    If the watch doesn't exist, a new one is created.
 
- pause:
+    Usage: start <watch_name>
+
+ stop:
     Pauses the given watch.
 
- cont, c:
-    Resumes a taking time by the given watch.
+    Usage: pause <watch_name/watch_index>
+
+ cont:
+    Restarts a watch with the given name.
+
+    Usage: cont <watch_name/watch_index>
 
  quit, q:
     Saves the status and taken time of all watches and quits the program.
@@ -26,9 +35,12 @@
     Prints this help message.
 
  archive, a:
-    Archiving (hiding) a watch.
+    Archives (hides) a watch.
 
- weekly, w, wa:
-    Printing all watches and moving them to a backup file.
-    This function is meant to be used to compile weekly / monthly / etc. progress.
+ daily:
+    Prints all watches and moves them to a backup file.
+    This function is meant to be used to compile daily / monthly / etc. progress.
+
+ pcats:
+    Prints total times for all categories
 ```
