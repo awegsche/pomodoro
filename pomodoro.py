@@ -194,7 +194,7 @@ def print_help(_: list[str], manager: Manager):
             print("    <no documentation>\n")
 
 def archive_watch(words: list[str], manager: Manager):
-    """Archiving (hiding) a watch."""
+    """Archives (hides) a watch."""
     w = get_watch(words[1], manager)
     if w is not None:
         w.archived = True
@@ -203,7 +203,7 @@ def archive_watch(words: list[str], manager: Manager):
     save(words, manager)
 
 def print_categories(_: list[str], manager: Manager):
-    """Printing total times for all categories"""
+    """Prints total times for all categories"""
 
     cats = manager.sum_by_categories()
 
@@ -211,7 +211,7 @@ def print_categories(_: list[str], manager: Manager):
         print(f"{c:24} {format_timedelta(cats[c])}")
 
 def daily_archive(words: list[str], manager: Manager):
-    """Printing all watches and moving them to a backup file.
+    """Prints all watches and moves them to a backup file.
     This function is meant to be used to compile daily / monthly / etc. progress.
     """
     print_watches(words, manager)
