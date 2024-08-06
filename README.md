@@ -15,6 +15,7 @@ python pomodoro.py
 
 Then, you can use the following commands to create, start, stop and resume stopwatches:
 ```
+
  print, p:
     Prints all available watches (active and inactive).
     Including status and already elapsed time.
@@ -55,4 +56,14 @@ Then, you can use the following commands to create, start, stop and resume stopw
 
  pcats:
     Prints total times for all categories
+
+ wstats:
+    Prints weekly statistics.
+    Sums elapsed times for same name watches for each weekday from Monday until now and the sum of
+    the whole week.
+
+ wcats:
+    Prints weekly category statistics.
+    Sums elapsed times for categories for each weekday from Monday until now and the sum of
+    the whole week.
 ```
