@@ -48,7 +48,14 @@ class Stopwatch():
         return f"{self.name:16} | {format_timedelta(self.get_elapsed())} | {running} | {self.category}"
 
     def serialise(self) -> str:
-        return f"{self.name}, {self.starttime.isoformat()}, {self.elapsed}, {self.running}, {sanitise_note(self.note)}, {self.archived}"
+        return (f"{self.name}, "
+                f"{self.starttime.isoformat()}, "
+                f"{self.elapsed}, "
+                f"{self.running}, "
+                f"{sanitise_note(self.note)}, "
+                f"{self.archived}, "
+                f"{self.category}"
+                )
 
     @staticmethod
     def deserialise(to_parse: str):
