@@ -29,6 +29,8 @@ class Stopwatch():
                 self.elapsed == value.elapsed)
 
     def pause(self):
+        if not self.running:
+            return
         self.running = False
         self.elapsed = self.elapsed + (datetime.datetime.now() - self.starttime)
 
