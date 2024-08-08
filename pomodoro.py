@@ -1,5 +1,6 @@
 from collections.abc import Callable
 from manager import Manager
+import os
 
 from stopwatch import Stopwatch, format_timedelta
 from stats import get_weekly_stats, get_weekly_cats
@@ -212,6 +213,8 @@ def main():
     manager.add_shortcut("a", "archive")
     manager.add_shortcut("define_category", "cat")
     manager.add_shortcut("def_cat", "cat")
+
+    os.system("")
 
     while(manager.running):
         cmd = input("> ")

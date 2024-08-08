@@ -77,5 +77,5 @@ class Manager():
             cmd = self.commands[words[0]]
             cmd(words, self)
         else:
-            print(f"Unknown command '{cmd_input}'")
+            print(f"\33[31mERROR: Unknown command '{cmd_input}' \33[0m\a")
 
