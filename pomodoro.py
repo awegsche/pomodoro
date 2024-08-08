@@ -79,6 +79,7 @@ def start_watch(words: list[str], manager: Manager):
 
     if w is not None:
         w.cont()
+        manager.last_active = words[1]
         print(f"continuing {w.name}, {format_timedelta(w.get_elapsed())}")
         return
     print("FATAL ERROR: something went wrong")
