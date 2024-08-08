@@ -69,11 +69,11 @@ class Manager():
         if (len(words) == 0):
             return;
 
-        if words[0] in self.shorts:
+        if words[0].lower() in self.shorts:
             cmd = self.commands[self.shorts[words[0]]]
             cmd(words, self)
             return
-        elif words[0] in self.commands:
+        elif words[0].lower() in self.commands:
             cmd = self.commands[words[0]]
             cmd(words, self)
         else:
