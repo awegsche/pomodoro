@@ -1,4 +1,5 @@
 from collections.abc import Callable
+from datetime import datetime
 from manager import Manager
 import os
 
@@ -121,6 +122,7 @@ def pause_watch(words: list[str], manager: Manager):
 
 def save(_: list[str], manager: Manager):
     """Saves the status"""
+    print("... saving ...")
     with open(manager.savepath, 'w') as savefile:
         savefile.writelines([w.serialise() + "\n" for w in manager.watches.values()])
 
@@ -217,7 +219,7 @@ def main():
     os.system("")
 
     while(manager.running):
-        cmd = input("> ")
+        cmd = input(f"[{datetime.now().time()}] > ")
         manager.exec(cmd)
 
 main()
