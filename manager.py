@@ -68,13 +68,14 @@ class Manager():
         words = cmd_input.split()
         if (len(words) == 0):
             return;
+        key = words[0].lower()
 
-        if words[0].lower() in self.shorts:
-            cmd = self.commands[self.shorts[words[0]]]
+        if key in self.shorts:
+            cmd = self.commands[self.shorts[key]]
             cmd(words, self)
             return
-        elif words[0].lower() in self.commands:
-            cmd = self.commands[words[0]]
+        elif key in self.commands:
+            cmd = self.commands[key]
             cmd(words, self)
         else:
             print(f"\33[31mERROR: Unknown command '{cmd_input}' \33[0m\a")

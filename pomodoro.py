@@ -81,6 +81,7 @@ def start_watch(words: list[str], manager: Manager):
         w.cont()
         manager.last_active = words[1]
         print(f"continuing {w.name}, {format_timedelta(w.get_elapsed())}")
+        save(words, manager)
         return
     print("FATAL ERROR: something went wrong")
 
@@ -123,7 +124,7 @@ def pause_watch(words: list[str], manager: Manager):
 
 def save(_: list[str], manager: Manager):
     """Saves the status"""
-    print("... saving ...")
+    # print("... saving ...")
     with open(manager.savepath, 'w') as savefile:
         savefile.writelines([w.serialise() + "\n" for w in manager.watches.values()])
 
