@@ -35,14 +35,15 @@ def get_weekly_cats(_: list[str], _manager: Manager):
         do_for_manager(day, manager)
         day = day + timedelta(days=1)
 
-    if len(_manager.watches) > 0:
-        print("Unsaved:")
-        do_for_manager(now, _manager)
 
     print("weekly stats:")
     print(f"{len(week_cats)} categories")
     for c in week_cats:
         print(f"{c:24} {format_timedelta(week_cats[c])}")
+
+    if len(_manager.watches) > 0:
+        print("Found unsaved watches (not included in statistics):")
+        do_for_manager(now, _manager)
 
 def get_weekly_stats(_: list[str], _manager: Manager):
     """Prints weekly statistics.
@@ -74,11 +75,12 @@ def get_weekly_stats(_: list[str], _manager: Manager):
 
         day = day + timedelta(days=1)
 
-    if len(_manager.watches) > 0:
-        print("Unsaved:")
-        do_for_manager(now, _manager)
 
     print("weekly stats:")
     print(f"{len(week_cats)} watches")
     for c in week_cats:
         print(f"{c:24} {format_timedelta(week_cats[c])}")
+
+    if len(_manager.watches) > 0:
+        print("Found unsaved watches (not included in statistics):")
+        do_for_manager(now, _manager)
