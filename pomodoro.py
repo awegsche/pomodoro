@@ -85,6 +85,32 @@ def start_watch(words: list[str], manager: Manager):
         return
     print("FATAL ERROR: something went wrong")
 
+def switch_watch(words: list[str], manager: Manager):
+    """Switches to a watch with the given name.
+    If a watch is currently running, it will be paused and the new watch will be started.
+    If the watch doesn't exist, a new one is created.
+
+    Usage: switch <watch_name>
+    """
+    w = get_watch(words[1], manager)
+
+    if w is None:
+        new_watch(words, manager)
+        w = get_watch(words[1], manager)
+
+    if w is not None:
+        print("pausing all running watches")
+        for rw in manager.watches.values():
+            rw.pause()
+        w.cont()
+        manager.last_active = words[1]
+        print(f"continuing {w.name}, {format_timedelta(w.get_elapsed())}")
+        save(words, manager)
+
+        return
+
+    print("FATAL ERROR: something went wrong")
+
 def cont_watch(words: list[str], manager: Manager):
     """Restarts a watch with the given name.
 
@@ -208,6 +234,7 @@ def main():
     manager.add_command("wstats", get_weekly_stats)
     manager.add_command("wcats", get_weekly_cats)
     manager.add_command("cat", define_category_for_watch)
+    manager.add_command("switch", switch_watch)
 
     manager.add_shortcut("q", "quit")
     manager.add_shortcut("p", "print")
@@ -217,6 +244,7 @@ def main():
     manager.add_shortcut("a", "archive")
     manager.add_shortcut("define_category", "cat")
     manager.add_shortcut("def_cat", "cat")
+    manager.add_shortcut("sw", "switch")
 
     os.system("")
 
