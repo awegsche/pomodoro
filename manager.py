@@ -73,7 +73,6 @@ class Manager():
         if key in self.shorts:
             cmd = self.commands[self.shorts[key]]
             cmd(words, self)
-            return
         elif key in self.commands:
             cmd = self.commands[key]
             cmd(words, self)

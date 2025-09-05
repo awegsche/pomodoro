@@ -14,7 +14,7 @@ def get_watch(key: str, manager: Manager) -> Stopwatch | None:
         idx = int(key)
         keys = list(manager.watches.keys())
         return manager.watches[keys[idx]]
-    except:
+    except ValueError:
         if key in manager.watches:
             return manager.watches[key]
         return None

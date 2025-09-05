@@ -35,7 +35,7 @@ def get_weekly_cats(_: list[str], _manager: Manager):
         print("")
 
     
-    for i in range(now.weekday()+1):
+    for _ in range(now.weekday()+1):
         manager = Manager(filename=create_pomodoro_archive_filename(day))
         do_for_manager(day, manager)
         day = day + timedelta(days=1)
@@ -82,7 +82,7 @@ def get_weekly_stats(_: list[str], _manager: Manager):
         print(DSTATS_BORDER)
         print("")
     
-    for i in range(now.weekday()+1):
+    for _ in range(now.weekday()+1):
         manager = Manager(filename=create_pomodoro_archive_filename(day))
         do_for_manager(day, manager)
 
